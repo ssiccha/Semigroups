@@ -54,7 +54,10 @@ function(o, m)
   o!.hasmults[m] := true;
   scc := OrbSCC(o)[m];
   gens := o!.gens;
-  one := FakeOne(gens);
+  if not IsBound(o!.fakeonegens) then
+    o!.fakeonegens := FakeOne(gens);
+  fi;
+  one := o!.fakeonegens;
   mults := o!.mults;
 
   # it would be better to use the SchreierTree here not the ReverseSchreierTree
@@ -101,7 +104,10 @@ function(o, m, i)
 
   scc := OrbSCC(o)[m];
   gens := o!.gens;
-  one := FakeOne(gens);
+  if not IsBound(o!.fakeonegens) then
+    o!.fakeonegens := FakeOne(gens);
+  fi;
+  one := o!.fakeonegens;
   mults := o!.mults;
 
   if not IsInverseActingSemigroupRep(o!.parent) then
@@ -324,7 +330,10 @@ function(o, m, i)
 
   scc := OrbSCC(o)[m];
   gens := o!.gens;
-  one := FakeOne(gens);
+  if not IsBound(o!.fakeonegens) then
+    o!.fakeonegens := FakeOne(gens);
+  fi;
+  one := o!.fakeonegens;
 
   mults := o!.mults;
 
@@ -369,7 +378,10 @@ function(o, m)
   o!.hasmults[m] := true;
   scc := OrbSCC(o)[m];
   gens := o!.gens;
-  one := FakeOne(gens);
+  if not IsBound(o!.fakeonegens) then
+    o!.fakeonegens := FakeOne(gens);
+  fi;
+  one := o!.fakeonegens;
   mults := o!.mults;
 
   genpos := SchreierTreeOfSCC(o, m);

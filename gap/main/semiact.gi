@@ -117,6 +117,7 @@ function(Constructor, S, coll, opts)
   fi;
 
   AddGeneratorsToOrbit(o, coll);
+  o!.fakeonegens := FakeOne(o!.gens);
 
   # unbind everything related to strongly connected components, since
   # even if the orbit length doesn't change the strongly connected components
@@ -169,6 +170,7 @@ function(Constructor, S, coll, opts)
   rho_o!.parent := t;
   rho_o!.scc_reps := [FakeOne(GeneratorsOfSemigroup(t))];
   Append(rho_o!.gens, coll);
+  o!.fakeonegens := FakeOne(o!.gens);
   ResetFilterObj(rho_o, IsClosed);
   SetRhoOrb(t, rho_o);
 
@@ -446,6 +448,7 @@ function(Constructor, S, coll, opts)
 
   o := StructuralCopy(LambdaOrb(S));
   AddGeneratorsToOrbit(o, coll);
+  o!.fakeonegens := FakeOne(o!.gens);
 
   #remove everything related to strongly connected components
   Unbind(o!.scc);
@@ -689,7 +692,7 @@ InstallMethod(\in,
 "for a multiplicative element and inverse acting semigroup rep",
 [IsMultiplicativeElement, IsInverseActingSemigroupRep],
 function(x, S)
-  local o, lambda, lambda_l, rho, rho_l, m, schutz, scc, rep;
+  local o, lambda, lambda_l, rho, rho_l, m, schutz, scc, rep, maxactionrank;
 
   if ElementsFamily(FamilyObj(S)) <> FamilyObj(x)
       or (IsActingSemigroupWithFixedDegreeMultiplication(S)
@@ -704,10 +707,14 @@ function(x, S)
     return x in AsSSortedList(S);
   fi;
 
+  if not IsBound(S!.genmaxactionrank) then
+    S!.genmaxactionrank := MaximumList(List(Generators(S),
+                                            x -> ActionRank(S)(x)));
+  fi;
+  maxactionrank := S!.genmaxactionrank;
   if not (IsMonoid(S) and IsOne(x)) then
     if Length(Generators(S)) > 0
-        and ActionRank(S)(x) >
-        MaximumList(List(Generators(S), x -> ActionRank(S)(x))) then
+        and ActionRank(S)(x) > maxactionrank then
       Info(InfoSemigroups, 2, "element has larger rank than any element of ",
            "semigroup.");
       return false;
